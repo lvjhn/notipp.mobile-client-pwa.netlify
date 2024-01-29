@@ -200,7 +200,7 @@ export default class ConnectionManager
                             registration.showNotification(
                                 clientName, 
                                 {
-                                    body: `Connected to '${serverName} (${ReadStateManager.countAll()} new message/s)'`
+                                    body: `Connected to '${serverName}' (${ReadStateManager.countAll()} new message/s)'`
                                 }
                             )
                         })

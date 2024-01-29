@@ -180,7 +180,10 @@ export default class ConnectionManager
                     showUnpaired = true; 
                     showDisconnected = true;
 
-                    server["client-state"].status = "ONLINE"
+
+                    if(server["client-state"].status != "DISABLED") {
+                        server["client-state"].status = "ONLINE"
+                    }
 
                     if(showOnline) {
                         showOnline = false;

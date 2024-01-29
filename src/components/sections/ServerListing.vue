@@ -131,7 +131,7 @@ async function disable(event, index) {
 async function enable(event, index) {
     event.preventDefault() 
     event.stopPropagation()
-    store.servers[index]['client-state'].status = "IDENTIFIED"
+    store.servers[index]['client-state'].status = "ENABLED"
     await ConnectionManager.connect(store.servers[index].server.id)
 }
 

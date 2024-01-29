@@ -100,7 +100,8 @@ export default class ConnectionManager
                     }
                 })
                 
-                if((await client.get("/is-paired")).data == "OK") {
+                if((await client.get("/is-paired")).data == "OK" && 
+                    server["client-state"].status == "ENABLED") {
                     server["client-state"].status = "ONLINE"
 
                     await ReadStateManager.getForServer(server)

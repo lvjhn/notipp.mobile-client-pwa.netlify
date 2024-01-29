@@ -129,6 +129,8 @@ async function disable(event, index) {
 }
 
 async function enable(index) {
+    event.preventDefault() 
+    event.stopPropagation()
     store.servers[index]['client-state'].status = "IDENTIFIED"
     await ConnectionManager.connect(store.servers[index].server.id)
 }

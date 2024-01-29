@@ -183,6 +183,8 @@ export default class ConnectionManager
 
                     if(server["client-state"].status != "DISABLED") {
                         server["client-state"].status = "ONLINE"
+                    } else {
+                        server["client-state"].status = "OFFLINE"
                     }
 
                     if(showOnline) {

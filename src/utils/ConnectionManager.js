@@ -17,9 +17,6 @@ export default class ConnectionManager
         const servers = ConnectionManager.store.servers; 
 
         for(let server of servers) {
-            if(server["client-state"].status == "DISABLED") {
-                continue;
-            } 
             console.log("@ Connecting to " + server.server.id)
 
             ConnectionManager.connect(server.server.id);
@@ -42,10 +39,6 @@ export default class ConnectionManager
             ConnectionManager.store.servers.find((item) => (
                 item.server.id == serverId  
             ));
-
-        if(server["client-state"].status == "DISABLED") {
-            return
-        }
 
         const ip = server.server.ip 
         const port = server.server.port
@@ -183,7 +176,7 @@ export default class ConnectionManager
 
                     if(server["client-state"].status != "DISABLED") {
                         server["client-state"].status = "ONLINE"
-                    } else {
+                    } else  {
                         server["client-state"].status = "OFFLINE"
                     }
 
@@ -217,7 +210,6 @@ export default class ConnectionManager
                 socket.close()
                 
                 if(server["client-state"].status != "UNPAIRED" && 
-                   server["client-state"].status != "DISABLED" && 
                    server["client-state"].status != "OFFLINE") {
                     
                     server["client-state"].status = "OFFLINE"
@@ -235,10 +227,6 @@ export default class ConnectionManager
                 }
 
                 socketTimeout = setTimeout(async () => {
-                    if(server["client-state"].status == "DISABLED") {
-                        clearTimeout(socketTimeout)
-                        return;
-                    }
                     socketTimeout && clearTimeout(socketTimeout)
                     socket && !hasOpened && socket.close()
                     socket = await createSocket()
@@ -254,10 +242,6 @@ export default class ConnectionManager
 
                 clearInterval(keepAliveInt)
                 console.error(error)
-
-                if(server["client-state"].status != "DISABLED") {
-                    server["client-state"].status = "OFFLINE"
-                }
 
                 for(let listener in ConnectionManager.listeners) {
                     const listenerFn = ConnectionManager.listeners[listener] 

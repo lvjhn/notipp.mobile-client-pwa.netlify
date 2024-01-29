@@ -63,8 +63,8 @@ function addCACertificate() {
         </div>
 
 
-        <div class="unread-messages">
-            {{ ReadStateManager.countAll() }} new messages!
+        <div class="unread-messages" v-if="store.servers.length > 0">
+            {{ ReadStateManager.countAll() == 0 ? "No" : ReadStateManager.countAll() }} new messages!
         </div> 
 
       

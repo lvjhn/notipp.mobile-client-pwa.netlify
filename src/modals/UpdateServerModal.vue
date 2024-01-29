@@ -82,11 +82,10 @@ async function submit() {
             <div class="inputs">
                 <InputItem label="IP Address">
                     <IpInput 
-                        :initial="server.server.ip.toString()"
+                        initial="192.168.1.0"
                         @onChange="(value) => {
                             inputs.ip = value
                         }"
-                         
                     />
                 </InputItem>
                 <InputItem label="Port No.">

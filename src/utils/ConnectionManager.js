@@ -17,6 +17,9 @@ export default class ConnectionManager
         const servers = ConnectionManager.store.servers; 
 
         for(let server of servers) {
+            if(server["client-state"].status == "DISABLED") {
+                continue;
+            } 
             console.log("@ Connecting to " + server.server.id)
 
             ConnectionManager.connect(server.server.id);
@@ -39,6 +42,10 @@ export default class ConnectionManager
             ConnectionManager.store.servers.find((item) => (
                 item.server.id == serverId  
             ));
+
+        if(server["client-state"].status == "DISABLED") {
+            return
+        }
 
         const ip = server.server.ip 
         const port = server.server.port
@@ -148,6 +155,18 @@ export default class ConnectionManager
                     message.data.toString()
                 ) 
 
+                if(server["client-state"].status == "DISABLED") {
+                    socket && socket.close()
+
+                    navigator.serviceWorker.ready.then((registration) => {
+                        registration.showNotification(
+                            clientName, 
+                            {
+                                body: `'${serverName}' has been disabled.`
+                            }
+                        )
+                    })
+                }
                     
                 if(message.data == "should:pair") {
                     server["client-state"].status = "UNPAIRED"
@@ -173,12 +192,7 @@ export default class ConnectionManager
                     showUnpaired = true; 
                     showDisconnected = true;
 
-
-                    if(server["client-state"].status != "DISABLED") {
-                        server["client-state"].status = "ONLINE"
-                    } else  {
-                        server["client-state"].status = "OFFLINE"
-                    }
+                    server["client-state"].status = "ONLINE"
 
                     if(showOnline) {
                         showOnline = false;
@@ -210,6 +224,7 @@ export default class ConnectionManager
                 socket.close()
                 
                 if(server["client-state"].status != "UNPAIRED" && 
+                   server["client-state"].status != "DISABLED" && 
                    server["client-state"].status != "OFFLINE") {
                     
                     server["client-state"].status = "OFFLINE"
@@ -227,6 +242,10 @@ export default class ConnectionManager
                 }
 
                 socketTimeout = setTimeout(async () => {
+                    if(server["client-state"].status == "DISABLED") {
+                        clearTimeout(socketTimeout)
+                        return;
+                    }
                     socketTimeout && clearTimeout(socketTimeout)
                     socket && !hasOpened && socket.close()
                     socket = await createSocket()
@@ -243,12 +262,22 @@ export default class ConnectionManager
                 clearInterval(keepAliveInt)
                 console.error(error)
 
+                if(server["client-state"].status != "DISABLED") {
+                    server["client-state"].status = "OFFLINE"
+                }
+
                 for(let listener in ConnectionManager.listeners) {
                     const listenerFn = ConnectionManager.listeners[listener] 
                     await listenerFn("error", null, serverId, socket)
                 }
             }
 
+
+            socket.keepClosedInterval = setInterval(() => {
+                if(socket.readyState == WebSocket.CLOSED) {
+                    server["client-state"].status == "OFFLINE"
+                }
+            }, 1009)
 
             return socket
         }

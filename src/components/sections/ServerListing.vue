@@ -125,14 +125,12 @@ async function disable(event, index) {
     event.preventDefault() 
     event.stopPropagation()
     store.servers[index]['client-state'].status = "DISABLED"
-    await ConnectionManager.disconnect(store.servers[index].server.id)
 }
 
 async function enable(event, index) {
     event.preventDefault() 
     event.stopPropagation()
     store.servers[index]['client-state'].status = "IDENTIFIED"
-    await ConnectionManager.connect(store.servers[index].server.id)
 }
 
 async function handleServerItemClick(server)  {

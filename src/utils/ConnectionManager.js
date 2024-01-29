@@ -155,18 +155,6 @@ export default class ConnectionManager
                     message.data.toString()
                 ) 
 
-                if(server["client-state"].status == "DISABLED") {
-                    socket && socket.close()
-
-                    navigator.serviceWorker.ready.then((registration) => {
-                        registration.showNotification(
-                            clientName, 
-                            {
-                                body: `'${serverName}' has been disabled.`
-                            }
-                        )
-                    })
-                }
                     
                 if(message.data == "should:pair") {
                     server["client-state"].status = "UNPAIRED"

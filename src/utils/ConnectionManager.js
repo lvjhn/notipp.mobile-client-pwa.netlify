@@ -273,12 +273,6 @@ export default class ConnectionManager
             }
 
 
-            socket.keepClosedInterval = setInterval(() => {
-                if(socket.readyState == WebSocket.CLOSED) {
-                    server["client-state"].status == "OFFLINE"
-                }
-            }, 1009)
-
             return socket
         }
 
